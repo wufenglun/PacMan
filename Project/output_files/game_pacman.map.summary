@@ -1,0 +1,17 @@
+Analysis & Synthesis Status : Successful - Thu Dec 01 13:54:25 2016
+Quartus Prime Version : 16.0.0 Build 211 04/27/2016 SJ Standard Edition
+Revision Name : game_pacman
+Top-level Entity Name : game_pacman
+Family : Cyclone V
+Logic utilization (in ALMs) : N/A
+Total registers : 139
+Total pins : 41
+Total virtual pins : 0
+Total block memory bits : 230,400
+Total DSP Blocks : 8
+Total HSSI RX PCSs : 0
+Total HSSI PMA RX Deserializers : 0
+Total HSSI TX PCSs : 0
+Total HSSI PMA TX Serializers : 0
+Total PLLs : 1
+Total DLLs : 0

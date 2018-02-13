@@ -1,0 +1,36 @@
+
+vlib work
+
+vlog -timescale 1ns/1ns datapath.v
+
+vsim datapath
+
+
+log {/*}
+
+add wave {/*}
+
+force {resetn} 0 0, 1 20, 0 400
+force {controlA} 0 0, 1 20, 0 40
+force {controlB} 0 0, 1 40, 0 60
+force {controlC} 0 0, 1 60, 0 360
+force {controlD} 0 0, 1 60, 0 360
+
+force {Input[0]} 0 0, 1 40
+force {Input[1]} 1 0, 0 40
+force {Input[2]} 1 0, 0 40
+force {Input[3]} 0 
+force {Input[4]} 0
+force {Input[5]} 0  
+force {Input[6]} 0 
+
+
+force {colour[0]} 1
+force {colour[1]} 1 
+force {colour[2]} 1 
+
+force {clk} 0 0, 1 10 -repeat 20
+
+run 500ns
+
+

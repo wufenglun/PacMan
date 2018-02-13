@@ -1,0 +1,164 @@
+module datapath(
+	clk,
+	KEY,
+	HEX0,
+	x,
+	y,
+	colour
+);
+
+	input clk;
+	input [3:0]	KEY;
+	output reg [6:0]	HEX0;
+	reg		[3:0]	score = 0;
+
+	output reg   [2:0] colour = 0;	
+	output reg	 [8:0] x = 0; 
+	output reg   [7:0] y = 0;	
+	
+	reg	  [8:0] man_x = 160;
+	reg	  [7:0] man_y = 180;
+	
+	reg	  [8:0] bean_x = 160;
+	reg	  [7:0] bean_y = 120;
+	
+	reg	  [8:0] obstacle_x = 150;
+	reg	  [7:0] obstacle_y = 70;	
+	
+	reg	  [8:0] WITCH_obstacle = 80;
+	reg	  [7:0] HIGH_obstacle = 40;
+	
+	reg	  [7:0] random_cnt = 0;	
+
+	always @(posedge clk) begin
+		if (random_cnt < 149)
+			random_cnt <= random_cnt + 1;
+		else
+			random_cnt <= 0;
+	end
+	
+	always @(posedge clk) begin
+		if (man_x==bean_x && man_y==bean_y) begin
+			if (score < 9) begin
+				score <= score + 1;
+				if (random_cnt >= 35 && random_cnt <= 38) begin
+					bean_x <= ((random_cnt+40)%15+1)*20;
+					bean_y <= ((random_cnt+40)/15+1)*20;
+				end
+				else if (random_cnt >= 50 && random_cnt <= 53) begin
+					bean_x <= ((random_cnt+45)%15+1)*20;
+					bean_y <= ((random_cnt+45)/15+1)*20;
+				end
+				else begin
+					bean_x <= (random_cnt%15+1)*20;
+					bean_y <= (random_cnt/15+1)*20;
+				end			
+			end
+			else begin
+				score <= 0;
+				bean_x <= 160;
+				bean_y <= 120;				
+			end
+		end
+	end	
+
+	always @(posedge clk) begin
+		if(KEY[0]==1)begin
+			if(man_x==(obstacle_x-WITCH_obstacle/2-10) &&((man_y==obstacle_y-10)||(man_y==obstacle_y+10)))begin
+				man_x<=man_x;
+			end			
+			else if(man_x<300)begin
+				man_x<=man_x+20;
+			end
+			else begin
+				man_x<=300;
+			end
+		end
+		else if(KEY[1]==1)begin
+			if(man_x==(obstacle_x+WITCH_obstacle/2+10) &&((man_y==obstacle_y-10)||(man_y==obstacle_y+10)))begin
+				man_x<=man_x;
+			end			
+			else if(man_x>20)begin
+				man_x<=man_x-20;
+			end
+			else begin
+				man_x<=20;
+			end
+		end
+		else if(KEY[2]==1)begin
+			if(man_y==(obstacle_y+HIGH_obstacle/2+10) &&((man_x==obstacle_x-10)||(man_x==obstacle_x+10) || (man_x==obstacle_x-30) || (man_x==obstacle_x+30)))begin
+				man_y<=man_y;
+			end			
+			else if(man_y>20)begin
+				man_y<=man_y-20;
+			end
+			else begin
+				man_y<=20;
+			end
+		end
+		else if(KEY[3]==1)begin
+			if(man_y==(obstacle_y-HIGH_obstacle/2-10) &&((man_x==obstacle_x-10)||(man_x==obstacle_x+10) || (man_x==obstacle_x-30) || (man_x==obstacle_x+30)))begin
+				man_y<=man_y;
+			end			
+			else if(man_y<220)begin
+				man_y<=man_y+20;
+			end
+			else begin
+				man_y<=220;
+			end
+		end					
+	end
+	
+	always @(posedge clk) begin
+		if (x < 319) begin
+			x <= x + 1;
+		end
+		else if (y < 239) begin
+			x <= 0;
+			y <= y + 1;
+		end
+		else begin
+			x <= 0;
+			y <= 0;			
+		end
+	end
+	
+	always @(posedge clk) begin
+		if(((x-man_x)*(x-man_x)+(y-man_y)*(y-man_y))<=60)
+			colour<=3'b100;
+		else if((x-bean_x)*(x-bean_x)+(y-bean_y)*(y-bean_y)<=10)
+			colour<=3'b010;
+		else if((x>=obstacle_x-WITCH_obstacle/2 && x<=obstacle_x+WITCH_obstacle/2)&&(y>=obstacle_y-HIGH_obstacle/2 && y<=obstacle_y+HIGH_obstacle/2))
+			colour<=3'b111;
+		else if(x>=10 && x<=310 && (y==10 || y==230))
+			colour<=3'b111;
+		else if((y>=10 && y<=230 && (x==10 || x==310)))
+			colour<=3'b111;
+		else
+			colour<=3'b000;
+	end
+
+	always @(*) begin
+		case(score)		
+			4'h0: HEX0 = 7'b1000000;
+			4'h1: HEX0 = 7'b1111001;
+			4'h2: HEX0 = 7'b0100100;
+			4'h3: HEX0 = 7'b0110000;
+			4'h4: HEX0 = 7'b0011001;	
+			4'h5: HEX0 = 7'b0010010;	
+			4'h6: HEX0 = 7'b0000010;	
+			4'h7: HEX0 = 7'b1111000;	
+			4'h8: HEX0 = 7'b0000000;	
+			4'h9: HEX0 = 7'b0011000;	
+			4'hA: HEX0 = 7'b0001000;	
+			4'hB: HEX0 = 7'b0000011;	
+			4'hC: HEX0 = 7'b1000110;	
+			4'hD: HEX0 = 7'b0100001;	
+			4'hE: HEX0 = 7'b0000110;	
+			4'hF: HEX0 = 7'b0001110;	
+			default: HEX0 = 7'h7F;
+		endcase
+	end
+
+endmodule
+	
